@@ -15,6 +15,7 @@ public class User {
    @JsonIgnore
    private boolean activated;
    private Set<Authority> authorities = new HashSet<>();
+   private String status;
 
    public User() { }
 
@@ -24,6 +25,14 @@ public class User {
       this.password = password;
       if (authorities != null) this.setAuthorities(authorities);
       this.activated = true;
+   }
+
+   public String getStatus() {
+      return status;
+   }
+
+   public void setStatus(String status) {
+      this.status = status;
    }
 
    public int getId() {

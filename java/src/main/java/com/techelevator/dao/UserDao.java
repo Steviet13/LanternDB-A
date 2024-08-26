@@ -16,4 +16,10 @@ public interface UserDao {
     User createUser(RegisterUserDto user);
 
     int deleteUser(int user_id);
+
+    void updateUserStatus(String status, int id);
+
+    int getUserIdByUsername(String username);
+
+    void updateUserStatusToOffline(int id);
 }

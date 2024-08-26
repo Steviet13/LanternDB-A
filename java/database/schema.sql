@@ -12,9 +12,17 @@ CREATE TABLE users (
 	user_id SERIAL,
 	username varchar(50) NOT NULL UNIQUE,
 	password_hash varchar(200) NOT NULL,
-	role varchar(50) NOT NULL,
-	CONSTRAINT PK_user PRIMARY KEY (user_id)
+	status varchar(50) NOT NULL,
+	role varchar(50) DEFAULT 'OFFLINE',
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	
 );
+
+ALTER TABLE users
+ADD CONSTRAINT PK_user PRIMARY KEY (user_id),
+ADD CONSTRAINT chk_status CHECK (status IN ('ONLINE', 'OFFLINE', 'AWAY', 'BUSY'));
+
 CREATE TABLE collections (
     collection_id SERIAL PRIMARY KEY,
     collection_name VARCHAR(255) NOT NULL
@@ -71,6 +79,22 @@ CREATE TABLE comments (
 			ON DELETE CASCADE
 
 );
+
+
+-- function to update the `updated_at` column
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- trigger that calls the function before each row update
+CREATE TRIGGER trg_update_users
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
 
 
 
