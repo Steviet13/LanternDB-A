@@ -20,6 +20,8 @@ import com.techelevator.dao.UserDao;
 import com.techelevator.security.jwt.JWTFilter;
 import com.techelevator.security.jwt.TokenProvider;
 
+import java.security.Principal;
+
 @RestController
 @CrossOrigin
 public class AuthenticationController {
@@ -27,6 +29,7 @@ public class AuthenticationController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private UserDao userDao;
+    private JdbcUserDao jdbcUserDao;
 
     public AuthenticationController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserDao userDao) {
         this.tokenProvider = tokenProvider;
@@ -64,24 +67,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            String username = authentication.getName();
-            try {
-                // Retrieve user ID by username
-                int userId = userDao.getUserIdByUsername(username);
-                // Update user status to OFFLINE
-                userDao.updateUserStatusToOffline(userId);
-            } catch (DaoException e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public void logout(Principal principal) {
+        String userName = principal.getName();
+        User user = jdbcUserDao.getUserByUsername(userName);
+        int id = user.getId();
+        try {
+            userDao.updateUserStatusToOffline(id);
+        } catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update user status", e);
         }
-
-        // Clear the security context
-        SecurityContextHolder.clearContext();
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
