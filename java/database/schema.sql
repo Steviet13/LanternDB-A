@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS ratings;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS friends;
 
 
 CREATE TABLE users (
@@ -78,6 +79,19 @@ CREATE TABLE comments (
 		REFERENCES users (user_id)
 			ON DELETE CASCADE
 
+);
+CREATE TABLE friends (
+	friend_id SERIAL PRIMARY KEY,
+	list_owner_id INT NOT NULL,
+	list_owner_name VARCHAR(255) NOT NULL,
+	friend_user_id INT NOT NULL,
+	friend_user_name VARCHAR(255) NOT NULL,
+	CONSTRAINT FK_friend_user_id FOREIGN KEY (friend_user_id)
+		REFERENCES users (user_id)
+			ON DELETE CASCADE,
+	CONSTRAINT FK_friend_user_name FOREIGN KEY (friend_user_name)
+		REFERENCES users (username)
+			ON DELETE CASCADE
 );
 
 

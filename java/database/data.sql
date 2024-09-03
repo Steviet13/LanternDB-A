@@ -520,5 +520,15 @@ INSERT INTO ratings (rating_score, user_id, game_id, game_title)
     VALUES (5, 15, 4062, 'BioShock Infinite');
 INSERT INTO ratings (rating_score, user_id, game_id, game_title)
     VALUES (5, 16, 4062, 'BioShock Infinite');
+INSERT INTO friends (list_owner_id, list_owner_name, friend_user_id, friend_user_name)
+	VALUES (4,'demouser',3,'demoadmin');
+INSERT INTO friends (list_owner_id, list_owner_name, friend_user_id, friend_user_name)
+	VALUES (4,'demouser',5,'dominik horn');
+INSERT INTO friends (list_owner_id, list_owner_name, friend_user_id, friend_user_name)
+	VALUES (4,'demouser',6,'orla russell');
+INSERT INTO friends (list_owner_id, list_owner_name, friend_user_id, friend_user_name)
+	VALUES (4,'demouser',7,'shania wood');
+INSERT INTO friends (list_owner_id, list_owner_name, friend_user_id, friend_user_name)
+	VALUES (4,'demouser',8,'beth blankenship');
 	
 COMMIT TRANSACTION;
