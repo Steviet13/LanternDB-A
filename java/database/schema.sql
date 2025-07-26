@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS ratings;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS friends;
+DROP TABLE IF EXISTS friendships;
 
 
 CREATE TABLE users (
@@ -80,18 +80,20 @@ CREATE TABLE comments (
 			ON DELETE CASCADE
 
 );
-CREATE TABLE friends (
-	friend_id SERIAL PRIMARY KEY,
-	list_owner_id INT NOT NULL,
-	list_owner_name VARCHAR(255) NOT NULL,
-	friend_user_id INT NOT NULL,
-	friend_user_name VARCHAR(255) NOT NULL,
-	CONSTRAINT FK_friend_user_id FOREIGN KEY (friend_user_id)
-		REFERENCES users (user_id)
-			ON DELETE CASCADE,
-	CONSTRAINT FK_friend_user_name FOREIGN KEY (friend_user_name)
-		REFERENCES users (username)
-			ON DELETE CASCADE
+CREATE TABLE friendships (
+    friendshipId SERIAL PRIMARY KEY,
+    userId1 INT NOT NULL,
+    userId2 INT NOT NULL,
+    is_favorite BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user1 FOREIGN KEY (userId1) 
+        REFERENCES users(userId) 
+        ON DELETE CASCADE,
+    CONSTRAINT fk_user2 FOREIGN KEY (userId2) 
+        REFERENCES users(userId) 
+        ON DELETE CASCADE,   
+    CONSTRAINT unique_friend_pair UNIQUE (userId1, userId2), 
+    CONSTRAINT no_self_friendship CHECK (userId1 <> userId2)
 );
 
 
