@@ -519,5 +519,9 @@ INSERT INTO ratings (rating_score, user_id, game_id, game_title)
 INSERT INTO ratings (rating_score, user_id, game_id, game_title)
     VALUES (5, 15, 4062, 'BioShock Infinite');
 INSERT INTO ratings (rating_score, user_id, game_id, game_title)
-    VALUES (5, 16, 4062, 'BioShock Infinite');	
+    VALUES (5, 16, 4062, 'BioShock Infinite');
+INSERT INTO friendships (userid1, userid2, is_favorite, created_at)
+    VALUES(4, 5, True, NOW()),
+          (4, 9, FALSE, NOW()),
+          (4, 13, TRUE, NOW());      	
 COMMIT TRANSACTION;

@@ -1,8 +1,8 @@
 package com.techelevator.controller;
 
-import com.techelevator.dao.JdbcFriendsDao;
+import com.techelevator.dao.JdbcFriendshipsDao;
 import com.techelevator.dao.JdbcUserDao;
-import com.techelevator.model.Friends;
+import com.techelevator.model.Friendships;
 import com.techelevator.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,18 +16,18 @@ import java.util.List;
 @RestController
 public class FriendsController {
     @Autowired
-    private JdbcFriendsDao jdbcFriendsDao;
+    private JdbcFriendshipsDao jdbcFriendshipsDao;
     @Autowired
     private JdbcUserDao jdbcUserDao;
 
     @GetMapping("/friends")
-    public List<Friends> fetchFriends(Principal principal) {
+    public List<Friendships> fetchFriends(Principal principal) {
 
         String userName = principal.getName();
         User user = jdbcUserDao.getUserByUsername(userName);
         int userId = user.getId();
 
-        return jdbcFriendsDao.fetchFriendsList(userId);
+        return jdbcFriendshipsDao.fetchFriendsList(userId);
     }
 
 

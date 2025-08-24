@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS ratings;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS friendships;
+DROP TABLE IF EXISTS friends;
 
 
 CREATE TABLE users (
@@ -87,10 +88,10 @@ CREATE TABLE friendships (
     is_favorite BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user1 FOREIGN KEY (userId1) 
-        REFERENCES users(userId) 
+        REFERENCES users(user_id) 
         ON DELETE CASCADE,
     CONSTRAINT fk_user2 FOREIGN KEY (userId2) 
-        REFERENCES users(userId) 
+        REFERENCES users(user_id) 
         ON DELETE CASCADE,   
     CONSTRAINT unique_friend_pair UNIQUE (userId1, userId2), 
     CONSTRAINT no_self_friendship CHECK (userId1 <> userId2)
