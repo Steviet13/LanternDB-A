@@ -3,6 +3,7 @@ package com.techelevator.dao;
 import com.techelevator.exception.DaoException;
 import com.techelevator.model.Friendships;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -26,7 +27,30 @@ public class JdbcFriendshipsDao implements FriendshipsDao {
 
     @Override
     public Friendships addFriend(Friendships friendships) {
-        return null;
+        String sql = "INSERT INTO friendships (userid1, userid2, is_favorite)" +
+                     "Values (?,?,?)" +
+                     "RETURNING friendshipid, userid1, userid2, is_favorite, created_at";
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql,
+                    friendships.getUserid1(),
+                    friendships.getUserid2(),
+                    friendships.isIs_favorite()
+            );
+
+        if(results.next()) {
+            Friendships newFriendship = new Friendships();
+            newFriendship.setFriendshipid(results.getInt("friendshipid"));
+            newFriendship.setUserid1(results.getInt("userid1"));
+            newFriendship.setUserid2(results.getInt("userid2"));
+            newFriendship.setIs_favorite(results.getBoolean("is_favorite"));
+            newFriendship.setCreated_at(results.getTimestamp("created_at").toLocalDateTime());
+            return newFriendship;
+        }    else {
+            throw new DaoException("Failed to insert friendship");
+        }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        }
     }
 
     @Override
@@ -57,7 +81,22 @@ public class JdbcFriendshipsDao implements FriendshipsDao {
 
     @Override
     public int deleteFriend(Friendships friendships) {
-        return 0;
+        int rows = 0;
+
+        int user1 = Math.min(friendships.getUserid1(), friendships.getUserid2());
+        int user2 = Math.max(friendships.getUserid1(), friendships.getUserid2());
+
+        String sql = "DELETE FROM friendships WHERE userid1 = ? AND userid2 = ?";
+
+        try {
+            rows = jdbcTemplate.update(sql, user1, user2);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
+
+        return rows;
     }
 
 
